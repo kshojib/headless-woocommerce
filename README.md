@@ -18,7 +18,7 @@ A modern, SEO-optimized headless WooCommerce storefront built with Next.js 14, T
 ## Prerequisites
 
 - Node.js 18+ installed
-- WordPress/WooCommerce running at `http://headlesswc.local/`
+- WordPress/WooCommerce running at `https://coral-moose-520172.hostingersite.com/`
 - WPGraphQL plugin installed on WordPress
 - WooCommerce GraphQL (WPGraphQL WooCommerce) plugin installed
 - Stripe account for payments

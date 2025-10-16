@@ -31,7 +31,7 @@ export async function createCheckoutSession(items: any[], customerEmail?: string
     payment_method_types: ['card'],
     line_items,
     mode: 'payment',
-    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}&payment_method=stripe`,
     cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/cancel`,
     customer_email: customerEmail,
     metadata: {

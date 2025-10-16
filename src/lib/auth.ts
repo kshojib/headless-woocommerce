@@ -128,3 +128,26 @@ export const jwtAuth = {
     }
   },
 };
+
+export async function verifyToken(token: string): Promise<any> {
+  try {
+    const response = await axios.post(
+      `${JWT_AUTH_ENDPOINT}/token/validate`,
+      {},
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error('Invalid token');
+  }
+}
+
+export function generateOrderHash(orderId: string | number): string {
+  const timestamp = Date.now();
+  const randomStr = Math.random().toString(36).substring(2);
+  return Buffer.from(`${orderId}_${timestamp}_${randomStr}`).toString('base64url');
+}

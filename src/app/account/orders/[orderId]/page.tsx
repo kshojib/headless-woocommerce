@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
 import { useCartStore } from "@/store/cart-store";
-import { getAuthenticatedClient, GET_ORDER_DETAILS } from "@/lib/graphql-client";
+import {
+  getAuthenticatedClient,
+  GET_ORDER_DETAILS,
+} from "@/lib/graphql-client";
 import { formatPrice } from "@/lib/utils";
 import toast from "react-hot-toast";
 
@@ -38,7 +41,7 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
         const data: any = await client.request(GET_ORDER_DETAILS, {
           id: parseInt(params.orderId),
         });
-        
+
         if (data.order) {
           setOrder(data.order);
         } else {
@@ -57,10 +60,10 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
 
   const handleReorder = async () => {
     if (!order?.lineItems?.nodes) return;
-    
+
     setReordering(true);
     let addedItems = 0;
-    
+
     try {
       for (const item of order.lineItems.nodes) {
         if (item.product?.node) {
@@ -70,25 +73,29 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
             databaseId: item.productId || 0,
             name: item.product.node.name,
             slug: item.product.node.slug,
-            price: (parseFloat(item.total.replace(/[^0-9.-]+/g, "")) / item.quantity).toFixed(2),
+            price: (
+              parseFloat(item.total.replace(/[^0-9.-]+/g, "")) / item.quantity
+            ).toFixed(2),
             onSale: false,
             image: item.product.node.image,
           };
-          
+
           addItem(product, item.quantity);
           addedItems++;
         }
       }
-      
+
       if (addedItems > 0) {
-        toast.success(`Added ${addedItems} item${addedItems > 1 ? 's' : ''} to cart`);
-        router.push('/cart');
+        toast.success(
+          `Added ${addedItems} item${addedItems > 1 ? "s" : ""} to cart`
+        );
+        router.push("/cart");
       } else {
-        toast.error('No items could be added to cart');
+        toast.error("No items could be added to cart");
       }
     } catch (error) {
-      console.error('Reorder error:', error);
-      toast.error('Failed to add items to cart');
+      console.error("Reorder error:", error);
+      toast.error("Failed to add items to cart");
     } finally {
       setReordering(false);
     }
@@ -146,7 +153,9 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
           <h1 className="text-3xl font-bold">Order #{order.orderNumber}</h1>
           <div className="mt-2 flex flex-wrap gap-4 text-sm text-gray-600">
             <span>Order Date: {new Date(order.date).toLocaleDateString()}</span>
-            <span>Status: <span className="font-medium">{order.status}</span></span>
+            <span>
+              Status: <span className="font-medium">{order.status}</span>
+            </span>
             <span>Payment: {order.paymentMethodTitle}</span>
           </div>
         </div>
@@ -155,7 +164,7 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
           disabled={reordering}
           className="btn-secondary disabled:opacity-50"
         >
-          {reordering ? 'Adding to Cart...' : 'Reorder'}
+          {reordering ? "Adding to Cart..." : "Reorder"}
         </button>
       </div>
 
@@ -166,11 +175,17 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
             <h2 className="mb-4 text-xl font-semibold">Order Items</h2>
             <div className="space-y-4">
               {order.lineItems.nodes.map((item: any, index: number) => (
-                <div key={index} className="flex items-center space-x-4 border-b pb-4 last:border-b-0">
+                <div
+                  key={index}
+                  className="flex items-center space-x-4 border-b pb-4 last:border-b-0"
+                >
                   {item.product?.node?.image && (
                     <img
                       src={item.product.node.image.sourceUrl}
-                      alt={item.product.node.image.altText || item.product.node.name}
+                      alt={
+                        item.product.node.image.altText ||
+                        item.product.node.name
+                      }
                       className="h-16 w-16 rounded-lg object-cover"
                     />
                   )}
@@ -178,12 +193,16 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
                     <h3 className="font-medium">
                       {item.product?.node?.name || "Product"}
                     </h3>
-                    <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                    <p className="text-sm text-gray-600">
+                      Quantity: {item.quantity}
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold">{item.total}</p>
                     {item.subtotal !== item.total && (
-                      <p className="text-sm text-gray-600">Subtotal: {item.subtotal}</p>
+                      <p className="text-sm text-gray-600">
+                        Subtotal: {item.subtotal}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -228,32 +247,45 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
             <div className="card">
               <h3 className="mb-3 font-semibold">Billing Address</h3>
               <div className="text-sm space-y-1">
-                <p>{order.billing.firstName} {order.billing.lastName}</p>
+                <p>
+                  {order.billing.firstName} {order.billing.lastName}
+                </p>
                 {order.billing.company && <p>{order.billing.company}</p>}
                 <p>{order.billing.address1}</p>
                 {order.billing.address2 && <p>{order.billing.address2}</p>}
-                <p>{order.billing.city}, {order.billing.state} {order.billing.postcode}</p>
+                <p>
+                  {order.billing.city}, {order.billing.state}{" "}
+                  {order.billing.postcode}
+                </p>
                 <p>{order.billing.country}</p>
-                {order.billing.email && <p className="mt-2">Email: {order.billing.email}</p>}
+                {order.billing.email && (
+                  <p className="mt-2">Email: {order.billing.email}</p>
+                )}
                 {order.billing.phone && <p>Phone: {order.billing.phone}</p>}
               </div>
             </div>
           )}
 
           {/* Shipping Address */}
-          {order.shipping && (order.shipping.address1 || order.shipping.firstName) && (
-            <div className="card">
-              <h3 className="mb-3 font-semibold">Shipping Address</h3>
-              <div className="text-sm space-y-1">
-                <p>{order.shipping.firstName} {order.shipping.lastName}</p>
-                {order.shipping.company && <p>{order.shipping.company}</p>}
-                <p>{order.shipping.address1}</p>
-                {order.shipping.address2 && <p>{order.shipping.address2}</p>}
-                <p>{order.shipping.city}, {order.shipping.state} {order.shipping.postcode}</p>
-                <p>{order.shipping.country}</p>
+          {order.shipping &&
+            (order.shipping.address1 || order.shipping.firstName) && (
+              <div className="card">
+                <h3 className="mb-3 font-semibold">Shipping Address</h3>
+                <div className="text-sm space-y-1">
+                  <p>
+                    {order.shipping.firstName} {order.shipping.lastName}
+                  </p>
+                  {order.shipping.company && <p>{order.shipping.company}</p>}
+                  <p>{order.shipping.address1}</p>
+                  {order.shipping.address2 && <p>{order.shipping.address2}</p>}
+                  <p>
+                    {order.shipping.city}, {order.shipping.state}{" "}
+                    {order.shipping.postcode}
+                  </p>
+                  <p>{order.shipping.country}</p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </div>
     </div>

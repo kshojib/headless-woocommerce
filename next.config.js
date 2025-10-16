@@ -4,11 +4,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: 'headlesswc.local',
+        hostname: 'coral-moose-520172.hostingersite.com',
         pathname: '/**',
       },
     ],
-    domains: ['headlesswc.local'],
+    domains: ['coral-moose-520172.hostingersite.com'],
   },
   async headers() {
     return [

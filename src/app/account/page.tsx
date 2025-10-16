@@ -103,15 +103,21 @@ export default function AccountPage() {
                       <p className="text-sm text-gray-600">{order.status}</p>
                     </div>
                   </div>
-                  
+
                   {/* Order Items Summary */}
-                  {order.lineItems?.nodes && order.lineItems.nodes.length > 0 && (
-                    <div className="mb-3 text-sm text-gray-600">
-                      {order.lineItems.nodes.length} item{order.lineItems.nodes.length > 1 ? 's' : ''} • 
-                      Total quantity: {order.lineItems.nodes.reduce((total: number, item: any) => total + item.quantity, 0)}
-                    </div>
-                  )}
-                  
+                  {order.lineItems?.nodes &&
+                    order.lineItems.nodes.length > 0 && (
+                      <div className="mb-3 text-sm text-gray-600">
+                        {order.lineItems.nodes.length} item
+                        {order.lineItems.nodes.length > 1 ? "s" : ""} • Total
+                        quantity:{" "}
+                        {order.lineItems.nodes.reduce(
+                          (total: number, item: any) => total + item.quantity,
+                          0
+                        )}
+                      </div>
+                    )}
+
                   <div className="flex justify-end">
                     <Link
                       href={`/account/orders/${order.databaseId}`}
