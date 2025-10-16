@@ -43,6 +43,22 @@ class WooCommerceAPI {
     }
   }
 
+  async getRecentProducts(limit: number = 8) {
+    try {
+      const response = await this.client.get('/products', {
+        params: {
+          per_page: limit,
+          orderby: 'date',
+          order: 'desc',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching recent products:', error);
+      throw error;
+    }
+  }
+
   async getProductBySlug(slug: string) {
     try {
       const response = await this.client.get('/products', {

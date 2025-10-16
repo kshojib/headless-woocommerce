@@ -92,6 +92,61 @@ export const GET_PRODUCTS = `
   }
 `;
 
+// Query for recent products ordered by date
+export const GET_RECENT_PRODUCTS = `
+  query GetRecentProducts($first: Int = 8) {
+    products(first: $first, where: { orderby: { field: DATE, order: DESC } }) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        id
+        databaseId
+        name
+        slug
+        description
+        shortDescription
+        onSale
+        dateCreated
+        ... on SimpleProduct {
+          price
+          regularPrice
+          salePrice
+          stockStatus
+        }
+        ... on VariableProduct {
+          price
+          regularPrice
+          salePrice
+          stockStatus
+        }
+        ... on ExternalProduct {
+          price
+          regularPrice
+          salePrice
+          externalUrl
+          buttonText
+        }
+        image {
+          sourceUrl
+          altText
+        }
+        productCategories {
+          nodes {
+            id
+            databaseId
+            name
+            slug
+          }
+        }
+        averageRating
+        reviewCount
+      }
+    }
+  }
+`;
+
 export const GET_PRODUCT_BY_SLUG = `
   query GetProductBySlug($slug: ID!) {
     product(id: $slug, idType: SLUG) {
