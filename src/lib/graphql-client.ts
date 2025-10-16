@@ -491,3 +491,63 @@ export const GET_CUSTOMER_ORDERS = `
     }
   }
 `;
+
+export const GET_ORDER_DETAILS = `
+  query GetOrderDetails($id: ID!) {
+    order(id: $id, idType: DATABASE_ID) {
+      id
+      databaseId
+      orderNumber
+      date
+      status
+      total
+      subtotal
+      totalTax
+      shippingTotal
+      paymentMethodTitle
+      billing {
+        firstName
+        lastName
+        company
+        address1
+        address2
+        city
+        state
+        postcode
+        country
+        email
+        phone
+      }
+      shipping {
+        firstName
+        lastName
+        company
+        address1
+        address2
+        city
+        state
+        postcode
+        country
+      }
+      lineItems {
+        nodes {
+          productId
+          quantity
+          total
+          subtotal
+          product {
+            node {
+              id
+              name
+              slug
+              image {
+                sourceUrl
+                altText
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;

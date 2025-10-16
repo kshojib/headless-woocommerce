@@ -89,17 +89,36 @@ export default function AccountPage() {
             <div className="space-y-4">
               {orders.map((order) => (
                 <div key={order.id} className="rounded-lg border p-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="font-semibold">
                         Order #{order.orderNumber}
                       </p>
-                      <p className="text-sm text-gray-600">{order.date}</p>
+                      <p className="text-sm text-gray-600">
+                        {new Date(order.date).toLocaleDateString()}
+                      </p>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold">{order.total}</p>
                       <p className="text-sm text-gray-600">{order.status}</p>
                     </div>
+                  </div>
+                  
+                  {/* Order Items Summary */}
+                  {order.lineItems?.nodes && order.lineItems.nodes.length > 0 && (
+                    <div className="mb-3 text-sm text-gray-600">
+                      {order.lineItems.nodes.length} item{order.lineItems.nodes.length > 1 ? 's' : ''} • 
+                      Total quantity: {order.lineItems.nodes.reduce((total: number, item: any) => total + item.quantity, 0)}
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-end">
+                    <Link
+                      href={`/account/orders/${order.databaseId}`}
+                      className="btn-primary text-sm"
+                    >
+                      View Details
+                    </Link>
                   </div>
                 </div>
               ))}

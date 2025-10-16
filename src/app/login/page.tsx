@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
-import { graphQLClient, LOGIN_MUTATION } from "@/lib/graphql-client";
+import { jwtAuth } from "@/lib/auth";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
@@ -21,13 +21,20 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const data: any = await graphQLClient.request(LOGIN_MUTATION, {
-        username: formData.username,
-        password: formData.password,
-      });
+      const data = await jwtAuth.login(formData.username, formData.password);
 
-      if (data.login) {
-        login(data.login.authToken, data.login.user);
+      if (data.token) {
+        // Convert REST API response to expected format
+        const user = {
+          id: data.user_nicename,
+          databaseId: 0, // Not available from REST API
+          email: data.user_email,
+          firstName: "",
+          lastName: "",
+          username: data.user_nicename,
+        };
+
+        login(data.token, user);
         toast.success("Login successful!");
         router.push("/account");
       }

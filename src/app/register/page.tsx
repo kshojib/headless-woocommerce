@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
-import { graphQLClient, REGISTER_CUSTOMER } from "@/lib/graphql-client";
+import { jwtAuth } from "@/lib/auth";
 import toast from "react-hot-toast";
 
 export default function RegisterPage() {
@@ -31,16 +31,33 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const data: any = await graphQLClient.request(REGISTER_CUSTOMER, {
-        email: formData.email,
+      // First register the user
+      const registerData = await jwtAuth.register({
         username: formData.username,
+        email: formData.email,
         password: formData.password,
         firstName: formData.firstName,
         lastName: formData.lastName,
       });
 
-      if (data.registerCustomer) {
-        login(data.registerCustomer.authToken, data.registerCustomer.customer);
+      // Then automatically log them in
+      const loginData = await jwtAuth.login(
+        formData.username,
+        formData.password
+      );
+
+      if (loginData.token) {
+        // Convert REST API response to expected format
+        const user = {
+          id: loginData.user_nicename,
+          databaseId: registerData.id,
+          email: loginData.user_email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          username: loginData.user_nicename,
+        };
+
+        login(loginData.token, user);
         toast.success("Registration successful!");
         router.push("/account");
       }
