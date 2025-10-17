@@ -17,8 +17,12 @@ async function getHomePageData() {
     try {
       console.log("Fetching recent products via REST API...");
       const restProducts = await wooCommerceAPI.getRecentProducts(6);
-      console.log("REST API success, got", restProducts?.length || 0, "products");
-      
+      console.log(
+        "REST API success, got",
+        restProducts?.length || 0,
+        "products"
+      );
+
       if (restProducts && restProducts.length > 0) {
         // Transform REST API response to match our Product interface
         recentProducts = restProducts.map((product: any) => ({
@@ -26,27 +30,30 @@ async function getHomePageData() {
           databaseId: product.id,
           name: product.name,
           slug: product.slug,
-          description: product.description || '',
-          shortDescription: product.short_description || '',
+          description: product.description || "",
+          shortDescription: product.short_description || "",
           onSale: product.on_sale || false,
           dateCreated: product.date_created,
-          price: product.price || '0',
-          regularPrice: product.regular_price || '0',
-          salePrice: product.sale_price || '',
-          stockStatus: product.stock_status || 'instock',
-          image: product.images && product.images[0]
-            ? {
-                sourceUrl: product.images[0].src,
-                altText: product.images[0].alt || product.name,
-              }
-            : null,
+          price: product.price || "0",
+          regularPrice: product.regular_price || "0",
+          salePrice: product.sale_price || "",
+          stockStatus: product.stock_status || "instock",
+          image:
+            product.images && product.images[0]
+              ? {
+                  sourceUrl: product.images[0].src,
+                  altText: product.images[0].alt || product.name,
+                }
+              : null,
           productCategories: {
-            nodes: product.categories ? product.categories.map((cat: any) => ({
-              id: cat.id.toString(),
-              databaseId: cat.id,
-              name: cat.name,
-              slug: cat.slug,
-            })) : [],
+            nodes: product.categories
+              ? product.categories.map((cat: any) => ({
+                  id: cat.id.toString(),
+                  databaseId: cat.id,
+                  name: cat.name,
+                  slug: cat.slug,
+                }))
+              : [],
           },
           averageRating: product.average_rating || 0,
           reviewCount: product.review_count || 0,
@@ -65,12 +72,15 @@ async function getHomePageData() {
 
       return {
         products: (productsData as any).products.nodes as Product[],
-        categories: (categoriesData as any).productCategories.nodes as Category[],
+        categories: (categoriesData as any).productCategories
+          .nodes as Category[],
         recentProducts,
       };
     } catch (mainError) {
-      console.error("Error fetching main products/categories via GraphQL, trying REST API fallback...");
-      
+      console.error(
+        "Error fetching main products/categories via GraphQL, trying REST API fallback..."
+      );
+
       // If GraphQL fails completely, try using REST API for main products too
       try {
         const [restProducts, restCategories] = await Promise.all([
@@ -90,19 +100,22 @@ async function getHomePageData() {
           regularPrice: product.regular_price,
           salePrice: product.sale_price,
           stockStatus: product.stock_status,
-          image: product.images && product.images[0]
-            ? {
-                sourceUrl: product.images[0].src,
-                altText: product.images[0].alt || product.name,
-              }
-            : null,
+          image:
+            product.images && product.images[0]
+              ? {
+                  sourceUrl: product.images[0].src,
+                  altText: product.images[0].alt || product.name,
+                }
+              : null,
           productCategories: {
-            nodes: product.categories ? product.categories.map((cat: any) => ({
-              id: cat.id.toString(),
-              databaseId: cat.id,
-              name: cat.name,
-              slug: cat.slug,
-            })) : [],
+            nodes: product.categories
+              ? product.categories.map((cat: any) => ({
+                  id: cat.id.toString(),
+                  databaseId: cat.id,
+                  name: cat.name,
+                  slug: cat.slug,
+                }))
+              : [],
           },
           averageRating: product.average_rating,
           reviewCount: product.review_count,
@@ -114,10 +127,12 @@ async function getHomePageData() {
           name: category.name,
           slug: category.slug,
           count: category.count,
-          image: category.image ? {
-            sourceUrl: category.image.src,
-            altText: category.name,
-          } : null,
+          image: category.image
+            ? {
+                sourceUrl: category.image.src,
+                altText: category.name,
+              }
+            : null,
         }));
 
         return {
@@ -211,8 +226,12 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No recent products available at the moment.</p>
-              <p className="text-sm text-gray-400">Debug: Recent products array length: {recentProducts.length}</p>
+              <p className="text-gray-500 mb-4">
+                No recent products available at the moment.
+              </p>
+              <p className="text-sm text-gray-400">
+                Debug: Recent products array length: {recentProducts.length}
+              </p>
             </div>
           )}
         </div>
